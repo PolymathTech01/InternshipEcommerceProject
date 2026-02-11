@@ -78,7 +78,7 @@ A comprehensive Streamlit web application for analyzing e-commerce orders, reven
    ```
 
 3. **Ensure your CSV file is in the same directory:**
-   - The app expects `ecommerce_orders_revenue.csv` in the same folder as `streamlit_app.py`
+   - The app expects `ecommerce_orders_revenue.csv` in the same folder as `app.py`
 
 ## Running the Application
 
@@ -101,7 +101,7 @@ A comprehensive Streamlit web application for analyzing e-commerce orders, reven
 ```
 Ecommerce-order/
 ├── ecommerce_orders_revenue.csv    # Your data file
-├── streamlit_app.py                # Main Streamlit application
+├── app.py                          # Main Streamlit application
 ├── requirements.txt                # Python dependencies
 ├── README.md                       # This file
 ├── main.ipynb                      # Original Jupyter notebook
