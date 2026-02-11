@@ -100,7 +100,7 @@ A browser window will automatically open with your interactive dashboard!
 
 1. Check that `ecommerce_orders_revenue.csv` is in the same folder
 2. Make sure you're in the correct directory
-3. Try: `streamlit run streamlit_app.py --logger.level=debug`
+3. Try: `streamlit run app.py --logger.level=debug`
 
 ### Missing packages?
 
