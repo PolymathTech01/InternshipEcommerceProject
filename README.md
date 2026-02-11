@@ -178,7 +178,7 @@ Your CSV file should contain the following columns:
 
 ### Issue: CSV file not found
 
-- **Solution:** Ensure `ecommerce_orders_revenue.csv` is in the same directory as `stapp.py`
+- **Solution:** Ensure `ecommerce_orders_revenue.csv` is in the same directory as `app.py`
 
 ### Issue: Missing dependencies
 
