@@ -178,7 +178,7 @@ Your CSV file should contain the following columns:
 
 ### Issue: CSV file not found
 
-- **Solution:** Ensure `ecommerce_orders_revenue.csv` is in the same directory as `streamlit_app.py`
+- **Solution:** Ensure `ecommerce_orders_revenue.csv` is in the same directory as `stapp.py`
 
 ### Issue: Missing dependencies
 
@@ -186,7 +186,7 @@ Your CSV file should contain the following columns:
 
 ### Issue: Port 8501 already in use
 
-- **Solution:** Run `streamlit run streamlit_app.py --server.port 8502`
+- **Solution:** Run `streamlit run app.py --server.port 8502`
 
 ### Issue: Data not updating
 
@@ -204,7 +204,7 @@ Update the `segment_customer()` function in the RFM analysis section
 
 ### Add new analyses
 
-- Follow the existing structure in the `streamlit_app.py` file
+- Follow the existing structure in the app.py` file
 - Use `st.subheader()` for section titles
 - Use `st.dataframe()` for tables
 - Use `st.pyplot()` for matplotlib charts
