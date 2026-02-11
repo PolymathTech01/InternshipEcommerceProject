@@ -5,6 +5,20 @@ import seaborn as sns
 import numpy as np
 from datetime import datetime
 
+# Helper function to make dataframes Arrow-compatible
+def make_arrow_compatible(df):
+    """Convert dataframe to be Arrow-compatible for Streamlit display"""
+    df_copy = df.copy()
+    for col in df_copy.columns:
+        if df_copy[col].dtype == 'object':
+            try:
+                # Try to convert to numeric
+                df_copy[col] = pd.to_numeric(df_copy[col], errors='coerce')
+            except:
+                # If conversion fails, convert to string
+                df_copy[col] = df_copy[col].astype(str)
+    return df_copy
+
 # Page configuration
 st.set_page_config(
     page_title="E-Commerce Analytics Dashboard",
@@ -108,17 +122,17 @@ if page == "Overview":
 
     st.markdown("---")
     st.subheader("Quick Data Preview")
-    st.dataframe(df.head(10), use_container_width=True)
+    st.dataframe(make_arrow_compatible(df.head(10)), use_container_width=True)
 
     st.markdown("---")
     st.subheader("Dataset Information")
     col1, col2 = st.columns(2)
     with col1:
         st.write("**Data Types:**")
-        st.dataframe(df.dtypes)
+        st.dataframe(make_arrow_compatible(pd.DataFrame(df.dtypes, columns=['Type'])), use_container_width=True)
     with col2:
         st.write("**Missing Values:**")
-        st.dataframe(df.isnull().sum())
+        st.dataframe(make_arrow_compatible(pd.DataFrame(df.isnull().sum(), columns=['Count'])), use_container_width=True)
 
 # ==================== PAGE 2: REVENUE ANALYSIS ====================
 elif page == "Revenue Analysis":
@@ -441,8 +455,8 @@ elif page == "Customer Segmentation":
 
     st.markdown("---")
     st.subheader("RFM Score Examples")
-    st.dataframe(rfm[['customer_id', 'Recency', 'Frequency', 'Monetary', 'R_score',
-                 'F_score', 'M_score', 'RFM_Score', 'Segment']].head(10), use_container_width=True)
+    st.dataframe(make_arrow_compatible(rfm[['customer_id', 'Recency', 'Frequency', 'Monetary', 'R_score',
+                 'F_score', 'M_score', 'RFM_Score', 'Segment']].head(10)), use_container_width=True)
 
 # ==================== PAGE 4: PRODUCT & CATEGORY ====================
 elif page == "Product & Category":
@@ -466,7 +480,7 @@ elif page == "Product & Category":
     category_analysis = category_analysis.sort_values(
         by="Total_Revenue", ascending=False)
 
-    st.dataframe(category_analysis, use_container_width=True)
+    st.dataframe(make_arrow_compatible(category_analysis), use_container_width=True)
 
     # Visualizations
     col1, col2 = st.columns(2)
@@ -553,7 +567,7 @@ elif page == "Product & Category":
     return_analysis = return_analysis.sort_values(
         by="Return_Rate[%]", ascending=False)
 
-    st.dataframe(return_analysis, use_container_width=True)
+    st.dataframe(make_arrow_compatible(return_analysis), use_container_width=True)
 
     fig, ax = plt.subplots(figsize=(12, 6))
     return_rate_sort = return_analysis.sort_values(
@@ -632,7 +646,7 @@ elif page == "Seasonal Patterns":
     monthly_data["Completion_rate[%]"] = (df.groupby("order_month_name")['order_status'].apply(
         lambda x: (x == "completed").sum()).reindex(month_order) / monthly_data["Order_count"] * 100).round(1)
 
-    st.dataframe(monthly_data, use_container_width=True)
+    st.dataframe(make_arrow_compatible(monthly_data), use_container_width=True)
 
     # Monthly trend visualization
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
