@@ -5,21 +5,19 @@ import seaborn as sns
 import numpy as np
 from datetime import datetime
 
-# Helper function to make dataframes Arrow-compatible
+
 def make_arrow_compatible(df):
     """Convert dataframe to be Arrow-compatible for Streamlit display"""
     df_copy = df.copy()
     for col in df_copy.columns:
         if df_copy[col].dtype == 'object':
             try:
-                # Try to convert to numeric
                 df_copy[col] = pd.to_numeric(df_copy[col], errors='coerce')
             except:
-                # If conversion fails, convert to string
                 df_copy[col] = df_copy[col].astype(str)
     return df_copy
 
-# Page configuration
+
 st.set_page_config(
     page_title="E-Commerce Analytics Dashboard",
     page_icon="chart",
@@ -27,7 +25,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom styling
 st.markdown("""
     <style>
     .metric-container {
@@ -60,8 +57,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Load data
-
 
 @st.cache_data
 def load_data():
@@ -69,7 +64,6 @@ def load_data():
     df["order_date"] = pd.to_datetime(df["order_date"])
     df["discount_applied"] = df["discount_applied"].fillna(0)
 
-    # Add temporal features
     df["order_month"] = df["order_date"].dt.month
     df["order_month_name"] = df["order_date"].dt.strftime("%B")
     df["Quarter"] = df["order_date"].dt.quarter
@@ -99,8 +93,7 @@ page = st.sidebar.radio(
     ["Overview", "Revenue Analysis", "Customer Segmentation",
      "Product & Category", "Seasonal Patterns", "Recommendations"]
 )
-
-# ==================== PAGE 1: OVERVIEW ====================
+# PAGE 1
 if page == "Overview":
     st.title("E-Commerce Analytics Dashboard")
     st.markdown(
@@ -129,12 +122,14 @@ if page == "Overview":
     col1, col2 = st.columns(2)
     with col1:
         st.write("**Data Types:**")
-        st.dataframe(make_arrow_compatible(pd.DataFrame(df.dtypes, columns=['Type'])), use_container_width=True)
+        st.dataframe(make_arrow_compatible(pd.DataFrame(
+            df.dtypes, columns=['Type'])), use_container_width=True)
     with col2:
         st.write("**Missing Values:**")
-        st.dataframe(make_arrow_compatible(pd.DataFrame(df.isnull().sum(), columns=['Count'])), use_container_width=True)
+        st.dataframe(make_arrow_compatible(pd.DataFrame(
+            df.isnull().sum(), columns=['Count'])), use_container_width=True)
 
-# ==================== PAGE 2: REVENUE ANALYSIS ====================
+#  PAGE 2: REVENUE ANALYSIS
 elif page == "Revenue Analysis":
     st.title("Revenue Analysis")
 
@@ -288,7 +283,7 @@ elif page == "Revenue Analysis":
 
     st.pyplot(fig)
 
-# ==================== PAGE 3: CUSTOMER SEGMENTATION ====================
+#  PAGE 3: CUSTOMER SEGMENTATION
 elif page == "Customer Segmentation":
     st.title("Customer Segmentation (RFM Analysis)")
 
@@ -458,7 +453,7 @@ elif page == "Customer Segmentation":
     st.dataframe(make_arrow_compatible(rfm[['customer_id', 'Recency', 'Frequency', 'Monetary', 'R_score',
                  'F_score', 'M_score', 'RFM_Score', 'Segment']].head(10)), use_container_width=True)
 
-# ==================== PAGE 4: PRODUCT & CATEGORY ====================
+# PAGE 4: PRODUCT & CATEGORY
 elif page == "Product & Category":
     st.title("Product and Category Analysis")
 
@@ -480,7 +475,8 @@ elif page == "Product & Category":
     category_analysis = category_analysis.sort_values(
         by="Total_Revenue", ascending=False)
 
-    st.dataframe(make_arrow_compatible(category_analysis), use_container_width=True)
+    st.dataframe(make_arrow_compatible(
+        category_analysis), use_container_width=True)
 
     # Visualizations
     col1, col2 = st.columns(2)
@@ -567,7 +563,8 @@ elif page == "Product & Category":
     return_analysis = return_analysis.sort_values(
         by="Return_Rate[%]", ascending=False)
 
-    st.dataframe(make_arrow_compatible(return_analysis), use_container_width=True)
+    st.dataframe(make_arrow_compatible(
+        return_analysis), use_container_width=True)
 
     fig, ax = plt.subplots(figsize=(12, 6))
     return_rate_sort = return_analysis.sort_values(
@@ -625,7 +622,7 @@ elif page == "Product & Category":
         st.success(
             f"Return rate ({overall_return_rate:.1f}%) is below industry average. Good performance!")
 
-# ==================== PAGE 5: SEASONAL PATTERNS ====================
+#  PAGE 5: SEASONAL PATTERNS
 elif page == "Seasonal Patterns":
     st.title("Seasonal Patterns and Trends")
 
@@ -762,7 +759,7 @@ elif page == "Seasonal Patterns":
         st.success(
             f"MODERATE seasonality ({revenue_cv:.1f}%): Revenue is relatively stable")
 
-# ==================== PAGE 6: RECOMMENDATIONS ====================
+#  PAGE 6: RECOMMENDATIONS
 elif page == "Recommendations":
     st.title("Strategic Recommendations")
 
@@ -816,7 +813,7 @@ elif page == "Recommendations":
         "order_status": lambda x: ((x == "cancelled") | (x == "returned")).sum()
     })
     return_analysis['Return_Rate[%]'] = (
-        return_analysis['Returns_Refunds'] / return_analysis['Total_Orders'] * 100)
+        return_analysis['order_status'] / return_analysis['order_id'] * 100)
     high_return_cat = return_analysis['Return_Rate[%]'].idxmax()
     high_return_rate = return_analysis.loc[high_return_cat, 'Return_Rate[%]']
 
